@@ -9,6 +9,7 @@ Build Dependencies
 
 * go
 * latest libgit2 release
+* git2go (`go get github.com/libgit2/git2go`)
 
 Syntax
 ------
