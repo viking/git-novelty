@@ -87,61 +87,61 @@ func main() {
 
 	configfn, err := git.ConfigFindGlobal()
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
+		fmt.Fprintln(os.Stderr, "Error finding global config file:", err)
 		return
 	}
 
 	config, err := git.NewConfig()
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
+		fmt.Fprintln(os.Stderr, "Error creating config:", err)
 		return
 	}
 
 	config, err = git.OpenOndisk(config, configfn)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
+		fmt.Fprintln(os.Stderr, "Error loading config:", err)
 		return
 	}
 
 	user, err := config.LookupString("user.name")
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
+		fmt.Fprintln(os.Stderr, "Error looking up user.name:", err)
 		return
 	}
 
 	email, err := config.LookupString("user.email")
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
+		fmt.Fprintln(os.Stderr, "Error looking up user.email:", err)
 		return
 	}
 
 	repo, err := git.OpenRepository(".")
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
+		fmt.Fprintln(os.Stderr, "Error opening repository:", err)
 		return
 	}
 
 	head, err := repo.Head()
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
+		fmt.Fprintln(os.Stderr, "Error fetching HEAD:", err)
 		return
 	}
 
 	odb, err := repo.Odb()
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
+		fmt.Fprintln(os.Stderr, "Error fetching object database:", err)
 		return
 	}
 
 	index, err := repo.Index()
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
+		fmt.Fprintln(os.Stderr, "Error fetching index:", err)
 		return
 	}
 
 	tree, err := index.WriteTree()
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
+		fmt.Fprintln(os.Stderr, "Error writing tree:", err)
 		return
 	}
 
@@ -162,7 +162,7 @@ func main() {
 		content = fmt.Sprintf(commitFormat, tree, head.Target(), user, email, now.Unix(), offset/36, msg, i)
 		oid, err = odb.Hash([]byte(content), git.ObjectCommit)
 		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
+			fmt.Fprintln(os.Stderr, "Error hashing object:", err)
 			return
 		}
 
@@ -182,20 +182,20 @@ func main() {
 
 	oid, err = odb.Write([]byte(content), git.ObjectCommit)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
+		fmt.Fprintln(os.Stderr, "Error writing object:", err)
 		return
 	}
 
 	commit, err := repo.LookupCommit(oid)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
+		fmt.Fprintln(os.Stderr, "Error looking up commit:", err)
 		return
 	}
 
 	opts := new(git.CheckoutOpts)
 	err = repo.ResetToCommit(commit, git.ResetMixed, opts)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
+		fmt.Fprintln(os.Stderr, "Error resetting to commit:", err)
 		return
 	}
 
